@@ -106,8 +106,166 @@ async function run() {
       res.status(500).send("Database error");
     }
   });
-  
+  app.post("/couple", async (req, res) => {
+    console.log("Received from frontend:", req.body);
 
+    const { couple_id, partner1_name, partner2_name, wedding_date,  religion,status } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO USERS (couple_id, partner1_name, partner2_name, wedding_date, religion,status)
+        VALUES (:couple_id, :partner1_name, :partner2_name, :wedding_date, :religion,:status)
+      `;
+      const bindParams = {
+        couple_id,
+        partner1_name,
+        partner2_name,
+        wedding_date,
+        religion,
+        status
+      };
+      console.log(bindParams)
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("couple inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
+  app.post("/event", async (req, res) => {
+    const { event_id, couple_id, event_name, event_date, venue, description } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO Wedding_Events (event_id, couple_id, event_name, event_date, venue, description)
+        VALUES (:event_id, :couple_id, :event_name, :event_date, :venue, :description)
+      `;
+  
+      const bindParams = { event_id, couple_id, event_name, event_date, venue, description };
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("Event inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
+  app.post("/guest", async (req, res) => {
+    const { guest_id, couple_id, name, email, phone, invitation_sent, rsvp_status } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO Guests (guest_id, couple_id, name, email, phone, invitation_sent, rsvp_status)
+        VALUES (:guest_id, :couple_id, :name, :email, :phone, :invitation_sent, :rsvp_status)
+      `;
+  
+      const bindParams = { guest_id, couple_id, name, email, phone, invitation_sent, rsvp_status };
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("Guest inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
+  app.post("/vendor", async (req, res) => {
+    const { vendor_id, name, service_type, phone, email, religion, price, status } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO Vendor (vendor_id, name, service_type, phone, email, religion, price, status)
+        VALUES (:vendor_id, :name, :service_type, :phone, :email, :religion, :price, :status)
+      `;
+  
+      const bindParams = { vendor_id, name, service_type, phone, email, religion, price, status };
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("Vendor inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
+  
+  app.post("/expense", async (req, res) => {
+    const { expense_id, couple_id, category, amount, paid_by, dates } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO Budget_Expenses (expense_id, couple_id, category, amount, paid_by, dates)
+        VALUES (:expense_id, :couple_id, :category, :amount, :paid_by, :dates)
+      `;
+  
+      const bindParams = { expense_id, couple_id, category, amount, paid_by, dates };
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("Expense inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
+  app.post("/ritual", async (req, res) => {
+    const { ritual_id, religion, ritual_name, description, importance_level } = req.body;
+  
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+  
+      const q = `
+        INSERT INTO Rituals_Traditions (ritual_id, religion, ritual_name, description, importance_level)
+        VALUES (:ritual_id, :religion, :ritual_name, :description, :importance_level)
+      `;
+  
+      const bindParams = { ritual_id, religion, ritual_name, description, importance_level };
+      await connection.execute(q, bindParams, { autoCommit: true });
+  
+      res.status(200).send("Ritual inserted successfully");
+      await connection.close();
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
+  });
   
 }
 run();
