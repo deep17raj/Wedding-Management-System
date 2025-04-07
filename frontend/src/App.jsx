@@ -13,6 +13,7 @@ import GuestForm from './componenets/Details/GuestForm';
 import VendorForm from './componenets/Details/VendorForm';
 import BudgetExpenseForm from './componenets/Details/BudgetExpenseForm ';
 import RitualsForm from './componenets/Details/RitualsForm';
+import Booking from './componenets/Booking/Booking'
 
 function App() {
   const router = createBrowserRouter([
@@ -52,7 +53,13 @@ function App() {
       path: "/ritualdetail",
       element: <RitualsForm />,
     },
+    
+    {
+      path: "/booking",
+      element: <Booking />,
+    },
   ]);
+  
 
   return (
     <>
