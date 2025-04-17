@@ -67,8 +67,42 @@ async function run() {
   // } catch (err) {
   //   console.error(err);
   // }
-  app.get("/",(req,res)=>{
-    res.send("Hell No")
+  
+  app.get("/data",async(req,res)=>{
+    try {
+      const connection = await oracledb.getConnection({
+        user: "system",
+        password: "deep17raj",
+        connectString: "localhost:1521/xe",
+      });
+      
+    const options = { outFormat: oracledb.OUT_FORMAT_OBJECT };
+      const user = await connection.execute("select * from users", [], options);
+      console.log(user.rows);
+      const couple = await connection.execute("select * from couples", [], options);
+      
+      const event = await connection.execute("select * from Wedding_Events", [], options);
+     
+      const guest = await connection.execute("select * from guests", [], options);
+
+      const vendor = await connection.execute("select * from vendor", [], options);
+    
+      const expense = await connection.execute("select * from Budget_Expenses", [], options);
+      
+      const ritual = await connection.execute("select * from Rituals_Traditions", [], options);
+      res.json({
+        userData: user.rows[0] ||{},
+        coupleData: couple.rows[0] ||{},
+        eventData: event.rows[0] ||{},
+        guestData: guest.rows[0] ||{},
+        vendorData: vendor.rows[0] ||{},
+        expenseData: expense.rows[0] ||{},
+        ritualData: ritual.rows[0] ||{},
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).send("Database error");
+    }
   })
   app.post("/signup", async (req, res) => {
     console.log("Received from frontend:", req.body);
@@ -119,8 +153,8 @@ async function run() {
       });
   
       const q = `
-        INSERT INTO USERS (couple_id, partner1_name, partner2_name, wedding_date, religion,status)
-        VALUES (:couple_id, :partner1_name, :partner2_name, :wedding_date, :religion,:status)
+        INSERT INTO COUPLES (couple_id, partner1_name, partner2_name, wedding_date, religion,status)
+        VALUES (:couple_id, :partner1_name, :partner2_name, TO_DATE(:wedding_date, 'YYYY-MM-DD'), :religion,:status)
       `;
       const bindParams = {
         couple_id,
@@ -152,7 +186,7 @@ async function run() {
   
       const q = `
         INSERT INTO Wedding_Events (event_id, couple_id, event_name, event_date, venue, description)
-        VALUES (:event_id, :couple_id, :event_name, :event_date, :venue, :description)
+        VALUES (:event_id, :couple_id, :event_name, TO_DATE(:event_date, 'YYYY-MM-DD'), :venue, :description)
       `;
   
       const bindParams = { event_id, couple_id, event_name, event_date, venue, description };
@@ -228,7 +262,7 @@ async function run() {
   
       const q = `
         INSERT INTO Budget_Expenses (expense_id, couple_id, category, amount, paid_by, dates)
-        VALUES (:expense_id, :couple_id, :category, :amount, :paid_by, :dates)
+        VALUES (:expense_id, :couple_id, :category, :amount, :paid_by, TO_DATE(:dates, 'YYYY-MM-DD'))
       `;
   
       const bindParams = { expense_id, couple_id, category, amount, paid_by, dates };

@@ -22,7 +22,7 @@ CREATE TABLE  Wedding_Events (
     event_name VARCHAR2(20) NOT NULL,
     event_date DATE NOT NULL,
     venue VARCHAR2(20) NOT NULL,
-    description CLOB,
+    description VARCHAR2(20),
     CONSTRAINT fk_event_couple FOREIGN KEY (couple_id) REFERENCES Couples(couple_id)
 );
 CREATE TABLE Guests (
@@ -61,7 +61,7 @@ CREATE TABLE Rituals_Traditions (
     ritual_id NUMBER PRIMARY KEY,
     religion VARCHAR2(10) CHECK (religion IN ('Hindu', 'Muslim', 'Sikh', 'Christian')),
     ritual_name VARCHAR2(20) NOT NULL,
-    description CLOB,
+    description VARCHAR2(30),
     importance_level VARCHAR2(10) CHECK (importance_level IN ('Essential', 'Optional'))
 );
 COMMIT;

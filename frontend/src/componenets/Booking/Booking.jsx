@@ -1,91 +1,5 @@
-import React from "react";
-
-const sampleData = {
-  user: {
-    user_id: "u123",
-    username: "john_doe",
-    email: "john@example.com",
-    phone: "1234567890",
-    role: "Couple",
-    religion: "Christian",
-  },
-  couple: {
-    couple_id: 1,
-    partner1_name: "John",
-    partner2_name: "Jane",
-    wedding_date: "2025-12-15",
-    religion: "Christian",
-    status: "Planning",
-  },
-  events: [
-    {
-      event_id: 1,
-      event_name: "Engagement",
-      event_date: "2025-10-01",
-      venue: "Rose Garden",
-      description: "Engagement ceremony with close friends and family."
-    },
-    {
-      event_id: 2,
-      event_name: "Wedding",
-      event_date: "2025-12-15",
-      venue: "St. Cathedral Church",
-      description: "Wedding ceremony followed by reception."
-    }
-  ],
-  guests: [
-    {
-      guest_id: 1,
-      couple_id: 1,
-      name: "Alice",
-      email: "alice@example.com",
-      phone: "9876543210",
-      invitation_sent: 1,
-      rsvp_status: "Accepted"
-    },
-    {
-      guest_id: 2,
-      couple_id: 1,
-      name: "Bob",
-      email: "bob@example.com",
-      phone: "8765432190",
-      invitation_sent: 1,
-      rsvp_status: "Pending"
-    }
-  ],
-  vendors: [
-    {
-      vendor_id: 1,
-      name: "Floral Decor",
-      service_type: "Decoration",
-      phone: "9988776655",
-      email: "decor@example.com",
-      religion: "All",
-      price: 5000.00,
-      status: "Hired"
-    }
-  ],
-  expenses: [
-    {
-      expense_id: 1,
-      couple_id: 1,
-      category: "Venue",
-      amount: 2000.00,
-      paid_by: "John",
-      dates: "2025-09-01"
-    }
-  ],
-  rituals: [
-    {
-      ritual_id: 1,
-      religion: "Christian",
-      ritual_name: "Exchange of Vows",
-      description: "A heartfelt vow exchange during the ceremony.",
-      importance_level: "Essential"
-    }
-  ]
-};
-
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 const Card = ({ title, children }) => (
   <div className="bg-white shadow-xl rounded-2xl p-6 border border-pink-100 transition-transform hover:scale-[1.02] hover:shadow-2xl duration-300">
     <h2 className="text-3xl font-bold mb-4 text-pink-600 border-b pb-2 border-pink-200">{title}</h2>
@@ -94,85 +8,111 @@ const Card = ({ title, children }) => (
 );
 
 const Booking = () => {
+  const [data, setData] = useState(null);
+  const navigate = useNavigate();
+  useEffect(() => {
+    fetch("http://localhost:3001/data") // Replace with your backend URL if different
+      .then((res) => res.json())
+      .then((json) => {
+        console.log("Received:", json);
+        setData(json);  // Set the data to state
+        console.log(json.userData)  // Set the data to state
+      })
+      .catch((err) => {
+        console.error("Error fetching data:", err);
+      });
+    
+  }, []);
+
+  if (!data) return <div>Loading...</div>; // Display loading state
+
   return (
     <div className="grid gap-8 p-10 bg-gradient-to-br from-pink-100 to-pink-50 min-h-screen">
       <h1 className="text-4xl font-bold text-center text-pink-700 mb-10">Wedding Dashboard</h1>
 
       <Card title="User Info">
-        <p><strong>User ID:</strong> {sampleData.user.user_id}</p>
-        <p><strong>Username:</strong> {sampleData.user.username}</p>
-        <p><strong>Email:</strong> {sampleData.user.email}</p>
-        <p><strong>Phone:</strong> {sampleData.user.phone}</p>
-        <p><strong>Role:</strong> {sampleData.user.role}</p>
-        <p><strong>Religion:</strong> {sampleData.user.religion}</p>
+        <p><strong>User ID:</strong> {data.userData.USER_ID}</p>
+        <p><strong>Username:</strong> {data.userData.USERNAME}</p>
+        <p><strong>Email:</strong> {data.userData.EMAIL}</p>
+        <p><strong>Phone:</strong> {data.userData.PHONE}</p>
+        <p><strong>Role:</strong> {data.userData.ROLE}</p>
+        <p><strong>Religion:</strong> {data.userData.RELIGION}</p>
+        {/* <button  className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button> */}
       </Card>
 
       <Card title="Couple Info">
-        <p><strong>Couple ID:</strong> {sampleData.couple.couple_id}</p>
-        <p><strong>Partner 1:</strong> {sampleData.couple.partner1_name}</p>
-        <p><strong>Partner 2:</strong> {sampleData.couple.partner2_name}</p>
-        <p><strong>Wedding Date:</strong> {sampleData.couple.wedding_date}</p>
-        <p><strong>Religion:</strong> {sampleData.couple.religion}</p>
-        <p><strong>Status:</strong> {sampleData.couple.status}</p>
+        <p><strong>Couple ID:</strong> {data.coupleData.COUPLE_ID}</p>
+        <p><strong>Partner 1:</strong> {data.coupleData.PARTNER1_NAME}</p>
+        <p><strong>Partner 2:</strong> {data.coupleData.PARTNER2_NAME}</p>
+        <p><strong>Wedding Date:</strong> {data.coupleData.WEDDING_DATE}</p>
+        <p><strong>Religion:</strong> {data.coupleData.RELIGION}</p>
+        <p><strong>Status:</strong> {data.coupleData.STATUS}</p>
+        <button onClick={()=>{
+          navigate("/coupledetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
 
       <Card title="Wedding Events">
-        {sampleData.events.map(event => (
-          <div key={event.event_id} className="bg-pink-50 rounded-lg p-3 shadow-sm border border-pink-100">
-            <p><strong>{event.event_name}</strong> (ID: {event.event_id})</p>
-            <p><strong>Date:</strong> {event.event_date}</p>
-            <p><strong>Venue:</strong> {event.venue}</p>
-            <p><strong>Description:</strong> {event.description}</p>
-          </div>
-        ))}
+            <p><strong>{data.eventData.EVENT_NAME}</strong> (ID: {data.eventData.EVENT_ID})</p>
+            <p><strong>Date:</strong> {data.eventData.EVENT_DATE}</p>
+            <p><strong>Venue:</strong> {data.eventData.VENUE}</p>
+            <p><strong>Description:</strong> {data.eventData.DESCRIPTION}</p>
+            <button onClick={()=>{
+          navigate("/eventdetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
 
       <Card title="Guests">
-        {sampleData.guests.map(guest => (
-          <div key={guest.guest_id} className="bg-white border border-gray-100 rounded-md p-3 shadow-sm">
-            <p><strong>Name:</strong> {guest.name} (ID: {guest.guest_id})</p>
-            <p><strong>Email:</strong> {guest.email}</p>
-            <p><strong>Phone:</strong> {guest.phone}</p>
-            <p><strong>Invitation Sent:</strong> {guest.invitation_sent ? "Yes" : "No"}</p>
-            <p><strong>RSVP Status:</strong> {guest.rsvp_status}</p>
-          </div>
-        ))}
+            <p><strong>Name:</strong> {data.guestData.NAME} (ID: {data.guestData.GUEST_ID})</p>
+            <p><strong>Email:</strong> {data.guestData.EMAIL}</p>
+            <p><strong>Phone:</strong> {data.guestData.PHONE}</p>
+            <p><strong>Invitation Sent:</strong> {data.guestData.INVITATION_SENT ? "Yes" : "No"}</p>
+            <p><strong>RSVP Status:</strong> {data.guestData.RSVP_STATUS}</p>
+            <button onClick={()=>{
+          navigate("/guestdetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
 
       <Card title="Vendors">
-        {sampleData.vendors.map(vendor => (
-          <div key={vendor.vendor_id} className="bg-white border border-gray-100 rounded-md p-3 shadow-sm">
-            <p><strong>Name:</strong> {vendor.name} (ID: {vendor.vendor_id})</p>
-            <p><strong>Service Type:</strong> {vendor.service_type}</p>
-            <p><strong>Phone:</strong> {vendor.phone}</p>
-            <p><strong>Email:</strong> {vendor.email}</p>
-            <p><strong>Religion:</strong> {vendor.religion}</p>
-            <p><strong>Price:</strong> ${vendor.price}</p>
-            <p><strong>Status:</strong> {vendor.status}</p>
-          </div>
-        ))}
+        
+            <p><strong>Name:</strong> {data.vendorData.NAME} (ID: {data.vendorData.VENDOR_ID})</p>
+            <p><strong>Service Type:</strong> {data.vendorData.SERVICE_TYPE}</p>
+            <p><strong>Phone:</strong> {data.vendorData.PHONE}</p>
+            <p><strong>Email:</strong> {data.vendorData.EMAIL}</p>
+            <p><strong>Religion:</strong> {data.vendorData.RELIGION}</p>
+            <p><strong>Price:</strong> ${data.vendorData.PRICE}</p>
+            <p><strong>Status:</strong> {data.vendorData.STATUS}</p>
+            <button onClick={()=>{
+          navigate("/vendordetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
 
       <Card title="Budget Expenses">
-        {sampleData.expenses.map(expense => (
-          <div key={expense.expense_id} className="bg-white border border-gray-100 rounded-md p-3 shadow-sm">
-            <p><strong>Category:</strong> {expense.category} (ID: {expense.expense_id})</p>
-            <p><strong>Amount:</strong> ${expense.amount}</p>
-            <p><strong>Paid By:</strong> {expense.paid_by}</p>
-            <p><strong>Date:</strong> {expense.dates}</p>
-          </div>
-        ))}
+            <p><strong>Category:</strong> {data.expenseData.CATEGORY} (ID: {data.expenseData.EXPENSE_ID})</p>
+            <p><strong>Amount:</strong> ${data.expenseData.AMOUNT}</p>
+            <p><strong>Paid By:</strong> {data.expenseData.PAID_BY}</p>
+            <p><strong>Date:</strong> {data.expenseData.DATES}</p>
+            <button onClick={()=>{
+          navigate("/budgetdetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
 
       <Card title="Rituals & Traditions">
-        {sampleData.rituals.map(ritual => (
-          <div key={ritual.ritual_id} className="bg-white border border-gray-100 rounded-md p-3 shadow-sm">
-            <p><strong>Name:</strong> {ritual.ritual_name} (ID: {ritual.ritual_id})</p>
-            <p><strong>Religion:</strong> {ritual.religion}</p>
-            <p><strong>Description:</strong> {ritual.description}</p>
-            <p><strong>Importance:</strong> {ritual.importance_level}</p>
-          </div>
-        ))}
+        
+            <p><strong>Name:</strong> {data.ritualData.RITUAL_NAME} (ID: {data.ritualData.RITUAL_ID})</p>
+            <p><strong>Religion:</strong> {data.ritualData.RELIGION}</p>
+            <p><strong>Description:</strong> {data.ritualData.DESCRIPTION}</p>
+            <p><strong>Importance:</strong> {data.ritualData.IMPORTANCE_LEVEL}</p>
+            <button onClick={()=>{
+          navigate("/ritualdetail");
+        }} className="btn bg-green-500 p-3 rounded-md  mt-4">Update</button>
+        <button className="btn bg-red-500 p-3 rounded-md  mt-4 ml-2">Delete</button>
       </Card>
     </div>
   );

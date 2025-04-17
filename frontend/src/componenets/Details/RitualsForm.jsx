@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const RitualsForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     ritual_id: "",
     religion: "",
@@ -20,10 +22,32 @@ const RitualsForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Ritual Submitted:", formData);
-    alert("Ritual saved! Check console for details.");
+    try {
+      const res = await axios.post("http://localhost:3001/ritual", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status == 200) {
+        alert("Ritual data added Succcessfully");
+        navigate("/booking");
+      } else {
+        alert("Failed !");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("An error occurred while uploading.");
+    }
+    console.log("Form Submitted", formData);
+
+    // Reset form after submission
+    setFormData({
+      ritual_id: "",
+    religion: "",
+    ritual_name: "",
+    description: "",
+    importance_level: "",
+    });
     // Connect to backend here if needed
   };
 

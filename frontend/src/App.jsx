@@ -3,7 +3,7 @@ import { createBrowserRouter,RouterProvider } from "react-router-dom";
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import Signup from './componenets/auth/signup'
+import Signup from './componenets/auth/Signup'
 import Navbar from './componenets/Navbar/Navbar'
 import HomePage from './componenets/HomePage.jsx/HomePage'
 import Service from './componenets/Service/Service';
@@ -14,6 +14,7 @@ import VendorForm from './componenets/Details/VendorForm';
 import BudgetExpenseForm from './componenets/Details/BudgetExpenseForm ';
 import RitualsForm from './componenets/Details/RitualsForm';
 import Booking from './componenets/Booking/Booking'
+import Event from './componenets/update/Event';
 
 function App() {
   const router = createBrowserRouter([
@@ -42,7 +43,7 @@ function App() {
       element: <GuestForm />,
     },
     {
-      path: "/venderdetail",
+      path: "/vendordetail",
       element: <VendorForm />,
     },
     {
@@ -57,6 +58,10 @@ function App() {
     {
       path: "/booking",
       element: <Booking />,
+    },
+    {
+      path: "/updateeventdetail",
+      element: <Event />,
     },
   ]);
   

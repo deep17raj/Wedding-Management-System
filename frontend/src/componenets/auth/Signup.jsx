@@ -21,7 +21,7 @@ function Signup() {
   };
 
   // Validate and Submit Form
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     let newErrors = {};
 
@@ -40,20 +40,17 @@ function Signup() {
     }
 
     // Submit Form Data (Mock API Call)
-    try{
+    try {
       const res = await axios.post("http://localhost:3001/signup", formData, {
         headers: { "Content-Type": "application/json" },
       });
-    if(res.status==200){
-      alert("Signed up Succcessfully");
-      navigate("/");
-    }
-    else{
-      
-        alert("Failed !")
+      if (res.status == 200) {
+        alert("Signed up Succcessfully");
+        navigate("/");
+      } else {
+        alert("Failed !");
       }
-    }
-    catch(err){
+    } catch (err) {
       console.error("Error:", err);
       alert("An error occurred while uploading.");
     }

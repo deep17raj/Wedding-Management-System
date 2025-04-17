@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const VendorForm = () => {
+  
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     vendor_id: "",
     name: "",
@@ -23,10 +26,35 @@ const VendorForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Vendor form data:", formData);
-    alert("Vendor submitted! Check console for details.");
+    try {
+      const res = await axios.post("http://localhost:3001/vendor", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status == 200) {
+        alert("Vendor data added Succcessfully");
+        navigate("/budgetdetail");
+      } else {
+        alert("Failed !");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("An error occurred while uploading.");
+    }
+    console.log("Form Submitted", formData);
+
+    // Reset form after submission
+    setFormData({
+      vendor_id: "",
+    name: "",
+    service_type: "",
+    phone: "",
+    email: "",
+    religion: "",
+    price: "",
+    status: "",
+    });
     // Connect to your backend API here
   };
 

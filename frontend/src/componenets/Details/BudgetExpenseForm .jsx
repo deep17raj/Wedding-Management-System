@@ -1,6 +1,8 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const BudgetExpenseForm = () => {
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     expense_id: "",
     couple_id: "",
@@ -25,10 +27,33 @@ const BudgetExpenseForm = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Budget Expense Submitted:", formData);
-    alert("Budget expense saved! Check console for details.");
+    try {
+      const res = await axios.post("http://localhost:3001/expense", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status == 200) {
+        alert("Expense data added Succcessfully");
+        navigate("/ritualdetail");
+      } else {
+        alert("Failed !");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("An error occurred while uploading.");
+    }
+    console.log("Form Submitted", formData);
+
+    // Reset form after submission
+    setFormData({
+      expense_id: "",
+    couple_id: "",
+    category: "",
+    amount: "",
+    paid_by: "",
+    dates: "",
+    });
     // Connect this to your backend API if needed
   };
 
@@ -55,21 +80,15 @@ const BudgetExpenseForm = () => {
           <label htmlFor="couple_id" className="block text-sm font-medium text-gray-700">
             Couple
           </label>
-          <select
+          <input
             name="couple_id"
+            type="number"
             id="couple_id"
             value={formData.couple_id}
             onChange={handleChange}
             required
             className="mt-1 block w-full border rounded-md p-2 border-gray-300"
-          >
-            <option value="">Select Couple</option>
-            {couples.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.names}
-              </option>
-            ))}
-          </select>
+          />
         </div>
 
         <div>

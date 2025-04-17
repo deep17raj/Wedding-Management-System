@@ -1,6 +1,9 @@
 import React, { useState } from "react";
-
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 const CoupleDetails = () => {
+  
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     couple_id: "",
     partner1_name: "",
@@ -21,10 +24,33 @@ const CoupleDetails = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Form submitted:", formData);
-    alert("Form submitted! Check console for output.");
+    try {
+      const res = await axios.post("http://localhost:3001/couple", formData, {
+        headers: { "Content-Type": "application/json" },
+      });
+      if (res.status == 200) {
+        alert("Couple data added Succcessfully");
+        navigate("/eventdetail");
+      } else {
+        alert("Failed !");
+      }
+    } catch (err) {
+      console.error("Error:", err);
+      alert("An error occurred while uploading.");
+    }
+    console.log("Form Submitted", formData);
+
+    // Reset form after submission
+    setFormData({
+      couple_id: "",
+    partner1_name: "",
+    partner2_name: "",
+    wedding_date: "",
+    religion: "",
+    status: "",
+    });
     // You can connect this to a backend API here
   };
 
